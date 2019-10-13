@@ -1,6 +1,5 @@
 package com.example;
 
-import com.example.configuration.EnableCustomServiceTemplateLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
