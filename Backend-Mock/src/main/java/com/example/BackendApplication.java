@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
-@EnableCustomServiceTemplateLibrary
 public class BackendApplication extends SpringBootServletInitializer {
 
-    @Value("${http.connect.timeout1000}")
+    @Value("${http.connect.timeout:1000}")
     private int connectTimeout;
 
     @Value("${http.read.timeout:1000}")

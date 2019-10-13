@@ -1,4 +1,4 @@
-package com.example.KeyGenerator;
+package com.example.keyGenerator;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
