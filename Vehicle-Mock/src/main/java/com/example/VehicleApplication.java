@@ -1,11 +1,13 @@
 package com.example;
 
 import com.example.config.EnableCustomServiceTemplateLibrary;
+import com.example.services.token.RequestTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -58,5 +60,10 @@ public class VehicleApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(VehicleApplication.class, args);
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(VehicleApplication.class);
     }
 }

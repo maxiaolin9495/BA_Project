@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 public class BackendTokenController {
     Logger logger = LoggerFactory.getLogger(BackendTokenController.class);
 
-    TokenGenerationService tokenGenerationService = new TokenGenerationService();
+    @Autowired
+    TokenGenerationService tokenGenerationService;
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestToken")
     @ApiResponses({

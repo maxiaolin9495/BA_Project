@@ -15,6 +15,9 @@ public class TokenResponse {
         this.token = token;
     }
 
+    public TokenResponse(){
+
+    }
     public void setExp(String exp) {
         this.exp = exp;
     }
