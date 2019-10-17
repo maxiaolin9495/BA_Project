@@ -14,6 +14,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 public class TokenValidationService {
 
@@ -27,7 +28,8 @@ public class TokenValidationService {
             SignedJWT signedJWT = SignedJWT.parse(token);
             return validateSignature(signedJWT) &&
                     validateIssuer(signedJWT.getJWTClaimsSet().getIssuer()) &&
-                    validateExpiresAt(signedJWT.getJWTClaimsSet().getExpirationTime());
+                    validateExpiresAt(signedJWT.getJWTClaimsSet().getExpirationTime())
+                    && validateAudience(signedJWT.getJWTClaimsSet().getAudience());
         } catch (java.text.ParseException e){
             log.info("failed to parse token");
             return false;
@@ -62,11 +64,23 @@ public class TokenValidationService {
 
     private boolean validateExpiresAt(Date expirationTime){
         if(expirationTime == null){
-            log.info("missing exp field, invalid token");
+            log.info("missing expiration time, invalid token");
             return false;
         }
         if(System.currentTimeMillis() > expirationTime.getTime()){
             log.info("token expired");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateAudience(List<String> audiences){
+        if(audiences == null){
+            log.info("missing audience field, invalid token");
+            return false;
+        }
+        if(!audiences.contains("BACKEND_A") && !audiences.contains("vehicle")){
+            log.info("invalid audiences value");
             return false;
         }
         return true;
