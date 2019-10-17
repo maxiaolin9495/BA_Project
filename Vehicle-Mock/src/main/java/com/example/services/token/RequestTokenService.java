@@ -20,6 +20,7 @@ import java.util.Base64;
 public class RequestTokenService {
     private String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCKzWqRyINTGgehOMCVmVbp3pdyYBDPOCjCNuZe5kI1QjA+5f8m1GIqeirOAUuwgoSUUkOz6Q2GWc1Pq5WXkXVmDTpENllsSB7DFo374c0aycYlnrHa8zISceDnPrtXPJgdxarc/N4gAsD+YbFk/5qn4jiMSJGR1SDrxaDRw4NYswIDAQAB";
     private String validShortTermKey="13-10-2019";
+    private String maskedCLientId="vehicleA";
 
     @Value("${backend.token.endpoint}")
     private String tokenEndpoint;
@@ -33,6 +34,7 @@ public class RequestTokenService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             map.add("STK", encryptShortTermKey());
+            map.add("client_id", maskedCLientId);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
             ResponseEntity<TokenResponse> response = restTemplate.exchange(tokenEndpoint, HttpMethod.POST, request, TokenResponse.class);

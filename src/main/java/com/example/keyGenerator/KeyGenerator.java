@@ -13,10 +13,11 @@ public class KeyGenerator{
 
     public boolean generatekey() {
         try {
-            KeyPairGenerator keygen = KeyPairGenerator.getInstance("DSA");
-            keygen.initialize(512);
+            KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
+            keygen.initialize(1024);
             KeyPair keys = keygen.genKeyPair();
             PublicKey pubkey = keys.getPublic();
+
             PrivateKey prikey = keys.getPrivate();
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("myprikey.dat"));
             out.writeObject(prikey);

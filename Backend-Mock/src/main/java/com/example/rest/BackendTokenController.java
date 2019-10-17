@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Api(value = "Token Generation")
 @Controller
@@ -32,9 +33,12 @@ public class BackendTokenController {
                     message = "",
                     response = ErrorResponse.class)
     })
-    public ResponseEntity<TokenResponse> requestToken(@RequestParam(value = "STK") String encryptedShortTermKey) throws Exception {
+    public ResponseEntity<TokenResponse> requestToken(@RequestParam(value = "STK") String encryptedShortTermKey, @RequestParam(value = "vehicle_id") String maskedVehicleId) throws Exception {
         logger.info("receive get Token request");
-        TokenResponse tokenResponse = tokenGenerationService.generateToken(encryptedShortTermKey);
+        if(encryptedShortTermKey.equals("") | maskedVehicleId.equals("")){
+            throw new RuntimeException("Bad Request");
+        }
+        TokenResponse tokenResponse = tokenGenerationService.generateToken(encryptedShortTermKey, maskedVehicleId);
         return ResponseEntity.ok(tokenResponse);
     }
 

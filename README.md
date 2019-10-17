@@ -35,7 +35,7 @@ requestToken(finished)
 getPublicKey(needed)
 
 Functions: 
-generateToken(partly finished)
+generateToken(finished)
 validateToken(mock)
 sendPublicKey(needed)
 validateSignature(mock)
