@@ -38,7 +38,7 @@ public class RequestTokenService {
             ResponseEntity<TokenResponse> response = restTemplate.exchange(tokenEndpoint, HttpMethod.POST, request, TokenResponse.class);
             return response.getBody().getToken();
         } catch(HttpClientErrorException | HttpServerErrorException e) {
-            throw new RuntimeException();
+            throw new RuntimeException("Somethings went wrong during request Token " + e.getMessage());
         }
     }
 
