@@ -1,6 +1,7 @@
 package com.example.services.token;
 
 import com.example.data.TokenResponse;
+import com.example.services.validation.TokenValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -28,17 +29,22 @@ public class RequestTokenService {
     @Autowired
     RestTemplate restTemplate;
 
+    @Autowired
+    TokenValidation tokenValidation;
+
     public String requestToken() throws Exception{
         try{
             MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             map.add("STK", encryptShortTermKey());
-            map.add("client_id", maskedCLientId);
+            map.add("vehicle_id", maskedCLientId);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
             ResponseEntity<TokenResponse> response = restTemplate.exchange(tokenEndpoint, HttpMethod.POST, request, TokenResponse.class);
-            return response.getBody().getToken();
+            String token = response.getBody().getToken();
+            if(tokenValidation.validateToken(token)) return token;
+            else return null;
         } catch(HttpClientErrorException | HttpServerErrorException e) {
             throw new RuntimeException("Somethings went wrong during request Token " + e.getMessage());
         }

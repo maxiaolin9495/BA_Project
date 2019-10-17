@@ -15,11 +15,11 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
 
-public class TokenValidationService {
+public class TokenValidation {
 
     private static final String BACKEND_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJpG8N3aaSiw/wchkDXKgG3ZoyXxCYpsAW6MjRCNOFFcW0uQSptWK+8/H02ye11ZCNMz3+2420MlkKF4LAsY7EaNmp0DfbPcSEaUHOvfWk3OListT1+EKzVQTjzz8D+a/w1yJWb57JO7GxHrxdUi12HQi2RL/Ywm/VvmuuPNhOFQIDAQAB";
     private String validIssuer = "BACKEND_A";
-    Logger log = LoggerFactory.getLogger(TokenValidationService.class);
+    Logger log = LoggerFactory.getLogger(TokenValidation.class);
 
     public boolean validateToken(String token) {
         try {
@@ -51,8 +51,8 @@ public class TokenValidationService {
             log.info("Algorithm not found");
             return false;
         } catch (JOSEException e) {
-           log.info("invalid signature");
-           return false;
+            log.info("invalid signature");
+            return false;
         }
     }
 

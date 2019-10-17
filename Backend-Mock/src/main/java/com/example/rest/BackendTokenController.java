@@ -19,7 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 @Controller
 @RequestMapping(value="/v1")
 public class BackendTokenController {
-    Logger logger = LoggerFactory.getLogger(BackendTokenController.class);
+    Logger log = LoggerFactory.getLogger(BackendTokenController.class);
 
     @Autowired
     TokenGenerationService tokenGenerationService;
@@ -34,7 +34,7 @@ public class BackendTokenController {
                     response = ErrorResponse.class)
     })
     public ResponseEntity<TokenResponse> requestToken(@RequestParam(value = "STK") String encryptedShortTermKey, @RequestParam(value = "vehicle_id") String maskedVehicleId) throws Exception {
-        logger.info("receive get Token request");
+        log.info("receive get Token request");
         if(encryptedShortTermKey.equals("") | maskedVehicleId.equals("")){
             throw new RuntimeException("Bad Request");
         }

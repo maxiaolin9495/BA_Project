@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value="/v1/data")
 public class BackendPersonalDataController {
-    Logger logger = LoggerFactory.getLogger(BackendPersonalDataController.class);
+    Logger log = LoggerFactory.getLogger(BackendPersonalDataController.class);
 
     @RequestMapping(method = RequestMethod.GET, path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses({
@@ -33,7 +33,7 @@ public class BackendPersonalDataController {
                     response = ErrorResponse.class)
     })
     public ResponseEntity<DataResponse> requestData(@RequestHeader(AUTHORIZATION) String token) {
-        logger.info("receive get data request");
+        log.info("receive get data request");
 
         return ResponseEntity.ok(null);
     }
@@ -48,7 +48,7 @@ public class BackendPersonalDataController {
                     response = ErrorResponse.class)
     })
     public ResponseEntity<DataResponse> postData(@RequestHeader(AUTHORIZATION) String token) {
-        logger.info("receive post data request");
+        log.info("receive post data request");
 
         return ResponseEntity.ok(null);
     }

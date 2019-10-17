@@ -21,8 +21,8 @@ generateSTK(mock)
 requestToken(finished)
 encryptData(finished)
 buildConnection(needed)
-validateToken(needed)
-validateSignature(needed)
+validateToken(finshed)
+validateSignature(finished)
 send(needed)
 receive(needed)
 ```
@@ -36,9 +36,9 @@ getPublicKey(needed)
 
 Functions: 
 generateToken(finished)
-validateToken(mock)
+validateToken(finished)
 sendPublicKey(needed)
-validateSignature(mock)
+validateSignature(finished)
 ```
 
 ###Service Mock

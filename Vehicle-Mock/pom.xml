@@ -36,6 +36,12 @@
             <artifactId>httpclient</artifactId>
         </dependency>
 
+        <!--token generation&validateion-->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+        </dependency>
+
         <!-- start of jaxb -->
         <!-- jaxb got removed with java 11 modules -->
         <dependency>
