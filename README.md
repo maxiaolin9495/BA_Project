@@ -48,7 +48,6 @@ saveData(needed)
 getData(needed)
 
 Functions: 
-generateToken(partly finished)
 validateToken(partly finished)
 validateSignature(needed)
 ```
