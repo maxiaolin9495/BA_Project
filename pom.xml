@@ -73,10 +73,11 @@
     </dependencyManagement>
 
     <modules>
-        <module>Vehicle-Mock-1</module>
-        <module>Vehicle-Mock-2</module>
-        <module>Backend-Mock</module>
-        <module>Service-Mock</module>
+        <module>Vehicle-Mock-A</module>
+        <module>Vehicle-Mock-B</module>
+        <module>Backend-Mock-A</module>
+        <module>Backend-Mock-B</module>
+        <module>Service-Mock-A</module>
     </modules>
 
 </project>
