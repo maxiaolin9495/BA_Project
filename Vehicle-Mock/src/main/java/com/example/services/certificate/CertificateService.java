@@ -31,10 +31,10 @@ public class CertificateService {
     @Autowired
     RestTemplate restTemplate;
 
-    @Value("${root.ca.endpoint}")
+    @Value("${rootca.endpoint}")
     private String rootCAEndpoint;
 
-    @Value("${lt.ca.endpoint}")
+    @Value("${ltca.endpoint}")
     private String ltCAEndpoint;
 
     @Value("${vehicle.vin}")
@@ -66,7 +66,6 @@ public class CertificateService {
 
     public void requestRootCertificate(String rcaId){
         try {
-
 
             MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
             HttpHeaders headers = new HttpHeaders();
@@ -110,7 +109,6 @@ public class CertificateService {
             }
             headers.add("Authorization", token);
 
-            logger.info("encypt the short term key");
             map.add("publicKeyLTC", new String(Base64.getEncoder().encode(PUBLIC_KEY.getEncoded())));
             map.add("vin", vin);
 

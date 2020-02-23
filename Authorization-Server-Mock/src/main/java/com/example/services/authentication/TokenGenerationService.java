@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Date;
+import java.util.Set;
 
 public class TokenGenerationService {
 
@@ -68,7 +71,10 @@ public class TokenGenerationService {
         signedJWT.sign(jwsSigner);
 
         log.info("token is generated successfully");
-        return new TokenResponse(exp.toString(), signedJWT.serialize());
+        TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setToken(signedJWT.serialize());
+        tokenResponse.setExp(exp.toString());
+        return tokenResponse;
     }
 
 

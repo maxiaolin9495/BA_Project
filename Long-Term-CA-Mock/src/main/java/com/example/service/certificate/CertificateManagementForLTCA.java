@@ -49,7 +49,7 @@ public class CertificateManagementForLTCA extends CertificateManagement {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            logger.info("encypt the short term key");
+
             map.add("publicKeyLTCAC", new String(Base64.getEncoder().encode(PUBLIC_KEY.getEncoded())));
             map.add("LTCA_id", caId);
 
@@ -72,16 +72,11 @@ public class CertificateManagementForLTCA extends CertificateManagement {
     public X509Certificate createLTC(String publicKey, String vin){
         if(longTermCACertificate == null) requestIntermediateCertificate();
         try {
-            CertAndKeyGen keyGen = null;
-            keyGen = new CertAndKeyGen("RSA", "SHA1WithRSA", null);
-            keyGen.generate(1024);
-            PUBLIC_KEY = keyGen.getPublicKey();
-            PRIVATE_KEY = keyGen.getPrivateKey();
             X509Certificate intermediateCertificate = signCertificate(publicKey, vin, longTermCACertificate, PRIVATE_KEY);
             return intermediateCertificate;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to update root certificate");
+            throw new RuntimeException("Failed to create long-term certificate");
         }
 
     }

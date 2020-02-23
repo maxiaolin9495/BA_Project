@@ -6,7 +6,6 @@ import com.example.service.validation.TokenValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,9 +22,6 @@ import java.util.Base64;
 public class CACertificateController {
     Logger log = LoggerFactory.getLogger(CACertificateController.class);
 
-    @Value("${elasticsearch.index}")
-    String index;
-
     @Autowired
     CertificateManagementForLTCA certificateManagement;
 
@@ -38,7 +34,7 @@ public class CACertificateController {
     public ResponseEntity<CertificateResponse> requestLTC(@RequestHeader(value = "Authroization") String token,
                                                             @RequestParam(value = "publicKeyLTC") String key,
                                                             @RequestParam(value = "vin") String id) throws Exception {
-        log.info("receive LTCAC request");
+        log.info("receive LTC request");
 
         if(token == null || !tokenValidationService.validateToken(token)) return ResponseEntity.status(401).build();
 

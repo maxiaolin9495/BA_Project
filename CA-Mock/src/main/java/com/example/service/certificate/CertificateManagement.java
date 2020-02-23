@@ -29,17 +29,17 @@ public class CertificateManagement {
         try {
             byte[] decBackendPubKey = Base64.getDecoder().decode(publicKey);
             RSAPublicKey pub = (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec((decBackendPubKey)));
-            X500Principal x500Principal = new X500Principal(subjectId);
+            X500Principal x500Principal = new X500Principal("cn=" + subjectId);
             X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
             certGen.setSerialNumber(BigInteger.valueOf(System.currentTimeMillis()));
-            certGen.setIssuerDN(signerCertificate.getIssuerX500Principal());
+            certGen.setIssuerDN(signerCertificate.getSubjectX500Principal());
             certGen.setNotBefore(new Date(System.currentTimeMillis()));
             certGen.setNotAfter(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60));
             certGen.setSubjectDN(x500Principal);
             certGen.setPublicKey(pub);
             certGen.setSignatureAlgorithm(signerCertificate.getSigAlgName());
 
-            return certGen.generate(privateKey, "BC");
+            return certGen.generate(privateKey);
         } catch (Exception ex) {
             logger.error("Failed to generate certificate");
         }

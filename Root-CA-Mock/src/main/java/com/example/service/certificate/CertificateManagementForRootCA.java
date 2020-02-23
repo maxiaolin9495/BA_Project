@@ -75,7 +75,7 @@ public class CertificateManagementForRootCA extends CertificateManagement {
             //PUBLIC_KEY = new String(Base64.getEncoder().encode(keyGen.getPublicKey().getEncoded()));
             //PRIVATE_KEY = new String(Base64.getEncoder().encode(keyGen.getPrivateKey().getEncoded()));
 
-            X509Certificate rootCertificate = keyGen.getSelfCertificate(new X500Name(caId), (long) 365 * 24 * 60 * 60);
+            X509Certificate rootCertificate = keyGen.getSelfCertificate(new X500Name("cn=" + caId), (long) 365 * 24 * 60 * 60);
             rootCertificate  = super.createSelfSignedCertificate(rootCertificate,rootCertificate, PRIVATE_KEY );
             this.certificateStore.put(this.caId, rootCertificate);
         } catch (Exception e) {
@@ -107,7 +107,6 @@ public class CertificateManagementForRootCA extends CertificateManagement {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            logger.info("encypt the short term key");
             map.add("id", this.caId);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);

@@ -48,7 +48,7 @@ public class BackendTokenController {
             return ResponseEntity.status(400).body("incorrect password");
 
         if (v.getBlocked())
-            return ResponseEntity.status(401).body("you are blocked by the backend, please reach our service station");
+            return ResponseEntity.status(401).body("you are blocked by the backend, please reach our com.example.service station");
         List<String> storedAudience = Arrays.asList(v.getAudience());
         Set<String> audience = new HashSet<>();
 

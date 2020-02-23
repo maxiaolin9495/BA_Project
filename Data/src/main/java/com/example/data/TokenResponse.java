@@ -8,10 +8,6 @@ public class TokenResponse {
     private String exp;
     private String token;
 
-    public TokenResponse(String exp, String token){
-        this.exp = exp;
-        this.token = token;
-    }
 
     public TokenResponse(){
 

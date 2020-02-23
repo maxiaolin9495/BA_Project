@@ -1,13 +1,13 @@
 # BA_Project
 
 ## Definitions
-identity federation: is a federation of multiple automakers, which allows single-sign-on authentication for all vehicles they fabricated.  
+Authorization Server: is an authentication server built up by the automakers separately, which could authenticate if a vehicle could be trusted, if yes, it would generate token back to the vehicle.
 
-V2V connection: is a depluex connection between/among vehicles, allows both vehicle to send/receive data at the same time
+Root CA: is a root CA in vehicular PKI, built up by the automakers separately. 
 
-Server: is an authentication server built up by the automakers seprately, which could authenticate if a vehicle could be trusted, if yes, it would generate token back to the vehicle.
+Long-Term CA(LTCA): is a subordinate CA of a root CA, it issues LTC for the vehicles. 
 
-token: is an object encapsulating the security identity of a vehicle or a service. Vehicles in the same identity federation can use it to require/save data in services or builds V2V connnection between themselves. Services in the same identity federation can use it to require data from other services
+token: is an object encapsulating the security identity of a vehicle. Vehicles can use this token to retrieve a root certificate, or apply a new LTC by a LTCA
 
 
 
