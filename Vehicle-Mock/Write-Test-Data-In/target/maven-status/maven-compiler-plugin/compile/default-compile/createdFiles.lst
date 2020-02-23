@@ -1,0 +1,8 @@
+com\example\config\BackendConfiguration$1.class
+com\example\Application.class
+com\example\rest\BackendTokenController.class
+com\example\config\BackendConfiguration.class
+com\example\config\BackendConfiguration$3.class
+com\example\config\BackendConfiguration$2.class
+com\example\services\authentication\TokenGenerationService.class
+com\example\config\EnableCustomServiceTemplateLibrary.class

@@ -1,0 +1,23 @@
+version: '3.6'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.1
+    container_name: elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms256M -Xmx256M
+      - ELASTIC_PASSWORD=changeme
+    #    networks:
+    #      - docker-elk
+    volumes:
+      - type: bind
+        source: ./elasticsearch/master/es-master.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
