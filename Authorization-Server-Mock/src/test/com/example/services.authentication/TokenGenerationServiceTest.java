@@ -5,10 +5,11 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.SignedJWT;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.security.KeyFactory;
@@ -21,8 +22,9 @@ import java.util.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-
+@ActiveProfiles({"test"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TokenGenerationServiceTest {
 
@@ -36,8 +38,15 @@ public class TokenGenerationServiceTest {
     @Value("${token.issuer}")
     protected String issuer;
 
-    @Autowired
     protected TokenGenerationService tokenGenerationService = new TokenGenerationService();
+
+    @Before
+    public void setUp() throws Exception {
+
+        setField(tokenGenerationService, "BACKEND_PUBLIC_KEY", BACKEND_PUBLIC_KEY);
+        setField(tokenGenerationService, "BACKEND_PRIVATE_KEY", BACKEND_PRIVATE_KEY);
+        setField(tokenGenerationService, "issuer", issuer);
+    }
 
     @Test
     public void generateTokenWithValidAudience() {
