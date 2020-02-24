@@ -63,9 +63,6 @@ public class CertificateManagementForRootCA extends CertificateManagement {
             start();
             createRootCertificate();
         }
-        if(certificateStore == null){
-
-        }
         CertAndKeyGen keyGen = null;
         try {
             keyGen = new CertAndKeyGen("RSA", "SHA1WithRSA", null);
@@ -107,7 +104,8 @@ public class CertificateManagementForRootCA extends CertificateManagement {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            map.add("id", this.caId);
+            map.add("rootCAId", this.caId);
+            map.add("id", caId);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
             ResponseEntity<CertificateResponse> response = restTemplate.exchange(caEndpoints.get(caId), HttpMethod.POST, request, CertificateResponse.class);
@@ -131,8 +129,11 @@ public class CertificateManagementForRootCA extends CertificateManagement {
             createRootCertificate();
         }
         X509Certificate certificate = this.certificateStore.get(caId);
-        if(certificate == null){
+        if(!caId.equals(this.caId) && certificate == null){
             updateRootCertificate(caId);
+            certificate = this.certificateStore.get(caId);
+        }else if(certificate == null){
+            createRootCertificate();
             certificate = this.certificateStore.get(caId);
         }
         return certificate;

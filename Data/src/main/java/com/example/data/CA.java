@@ -25,7 +25,7 @@ public class CA {
         return revoked;
     }
 
-    public void setCaId(boolean revoked) {
+    public void setRevoked(boolean revoked) {
         this.revoked = revoked;
     }
 }

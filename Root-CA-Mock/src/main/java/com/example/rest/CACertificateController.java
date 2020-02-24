@@ -52,7 +52,7 @@ public class CACertificateController {
         log.info("receive LTCAC request");
 
         CA ca = elasticSearchRepository.findCA(index, id);
-        if(ca.getRevoked()) return ResponseEntity.status(401).build();
+        if(ca == null || ca.getRevoked()) return ResponseEntity.status(401).build();
 
         X509Certificate certificate = certificateManagement.createIntermediateCertificate(key, id);
         CertificateResponse certificateResponse= new CertificateResponse();
@@ -68,10 +68,26 @@ public class CACertificateController {
             produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestCertificate")
     public ResponseEntity requestCertificate(@RequestHeader(value = "Authroization") String token,
                                              @RequestParam(value = "id") String id) throws Exception {
-        log.info("receive LTCAC request");
+        log.info("receive RCAC request");
 
-        if(token == null && !Arrays.asList(caIds).contains(id)) return ResponseEntity.status(400).build();
-        else if(!tokenValidationService.validateToken(token)) return ResponseEntity.status(401).build();
+        if(token == null) return ResponseEntity.status(401).build();
+        if(!tokenValidationService.validateToken(token)) return ResponseEntity.status(401).build();
+
+        X509Certificate certificate = certificateManagement.getCertificate(id);
+        CertificateResponse certificateResponse= new CertificateResponse();
+        certificateResponse.setCaId(id);
+        certificateResponse.setCertificate(new String(Base64.getEncoder().encode(certificate.getEncoded())));
+        return ResponseEntity.ok(certificateResponse);
+    }
+
+    @RequestMapping(method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestCertificateForRoot")
+    public ResponseEntity requestCertificateForRoot(@RequestParam(value = "rootCAId") String rootCAId,
+                                             @RequestParam(value = "id") String id) throws Exception {
+        log.info("receive RCAC request, special for root CA");
+
+        if(!Arrays.asList(caIds).contains(rootCAId)) return ResponseEntity.status(400).build();
 
         X509Certificate certificate = certificateManagement.getCertificate(id);
         CertificateResponse certificateResponse= new CertificateResponse();
