@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ServiceConfiguration {
     @Bean
-    public TokenService buildRequestTokenService(){
+    public TokenService buildTokenService(){
         return new TokenService();
     }
 
@@ -16,4 +16,6 @@ public class ServiceConfiguration {
     CertificateService buildCertificateService(){
         return new CertificateService();
     }
+
+
 }
