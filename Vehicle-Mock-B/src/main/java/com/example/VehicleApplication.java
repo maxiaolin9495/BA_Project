@@ -1,10 +1,12 @@
 package com.example;
 
+import com.example.config.EnableCustomServiceTemplateLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -19,12 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
-public class Application extends SpringBootServletInitializer {
+@EnableCustomServiceTemplateLibrary
+public class VehicleApplication extends SpringBootServletInitializer {
 
-    @Value("${http.connect.timeout:1000}")
+    @Value("${http.connect.timeout:3000}")
     private int connectTimeout;
 
-    @Value("${http.read.timeout:1000}")
+    @Value("${http.read.timeout:3000}")
     private int readTimeout;
 
     @Bean
@@ -55,9 +58,11 @@ public class Application extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(VehicleApplication.class, args);
     }
 
-
-
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(VehicleApplication.class);
+    }
 }

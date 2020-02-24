@@ -129,13 +129,12 @@
         <module>Authorization-Server-Mock</module>
         <module>Authorization-Server-Mock-B</module>
         <module>CA-Mock</module>
-
-
         <module>Data</module>
         <module>dataStore</module>
         <module>Long-Term-CA-Mock</module>
         <module>Root-CA-Mock</module>
         <module>Vehicle-Mock</module>
+        <module>Vehicle-Mock-B</module>
     </modules>
     <packaging>pom</packaging>
 </project>
