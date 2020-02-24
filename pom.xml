@@ -135,6 +135,8 @@
         <module>Root-CA-Mock</module>
         <module>Vehicle-Mock</module>
         <module>Vehicle-Mock-B</module>
+        <module>Write-Test-Data-In</module>
+
     </modules>
     <packaging>pom</packaging>
 </project>

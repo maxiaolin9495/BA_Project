@@ -89,7 +89,7 @@ public class TokenValidationService {
             BACKEND_PUBLIC_KEY = response.getBody().getPublicKey();
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             log.info("Backend rejects request");
-            throw new RuntimeException("Somethings went wrong during request Token " + e.getMessage());
+            throw new RuntimeException("Somethings went wrong during request public Key " + e.getMessage());
         }
     }
     private boolean validateIssuer(String issuer){

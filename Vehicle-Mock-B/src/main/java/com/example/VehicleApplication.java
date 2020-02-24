@@ -24,39 +24,6 @@ import java.util.List;
 @EnableCustomServiceTemplateLibrary
 public class VehicleApplication extends SpringBootServletInitializer {
 
-    @Value("${http.connect.timeout:3000}")
-    private int connectTimeout;
-
-    @Value("${http.read.timeout:3000}")
-    private int readTimeout;
-
-    @Bean
-    public HttpComponentsClientHttpRequestFactory buildHttpComponentsClientHttpRequestFactory() {
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectTimeout(connectTimeout);
-        factory.setReadTimeout(readTimeout);
-        return factory;
-    }
-
-    @Bean @Qualifier("restTemplate")
-    public RestTemplate buildRestTemplate(@Autowired HttpComponentsClientHttpRequestFactory factory) {
-        RestTemplate template = new RestTemplate();
-        template.setRequestFactory(factory);
-
-        List<HttpMessageConverter<?>> convs = new ArrayList<>();
-        convs.add(new MappingJackson2HttpMessageConverter());
-        convs.add(new FormHttpMessageConverter());
-        convs.add(new ByteArrayHttpMessageConverter());
-        convs.add(new Jaxb2RootElementHttpMessageConverter());
-        convs.add(new StringHttpMessageConverter());
-        convs.add(new ResourceHttpMessageConverter());
-        convs.add(new SourceHttpMessageConverter());
-        convs.add(new AllEncompassingFormHttpMessageConverter());
-        template.setMessageConverters(convs);
-
-        return template;
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(VehicleApplication.class, args);
     }

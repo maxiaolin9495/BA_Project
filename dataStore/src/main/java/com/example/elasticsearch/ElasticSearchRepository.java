@@ -41,7 +41,7 @@ public class ElasticSearchRepository {
             }
             return null;
         }catch (IOException e){
-            logger.error("error happens, when trying to find the event in elasticsearch");
+            logger.error("error happens, when trying to find the vehicle in elasticsearch");
             return null;
         }catch(ElasticsearchStatusException e){
             logger.info("No such index");
@@ -85,7 +85,7 @@ public class ElasticSearchRepository {
             }
             return null;
         }catch (IOException e){
-            logger.error("error happens, when trying to find the event in elasticsearch");
+            logger.error("error happens, when trying to find the ca in elasticsearch");
             return null;
         }catch(ElasticsearchStatusException e){
             logger.info("No such index");

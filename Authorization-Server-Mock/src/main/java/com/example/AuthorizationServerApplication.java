@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
-public class Application extends SpringBootServletInitializer {
+public class AuthorizationServerApplication extends SpringBootServletInitializer {
 
     @Value("${http.connect.timeout:1000}")
     private int connectTimeout;
@@ -55,7 +55,7 @@ public class Application extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(AuthorizationServerApplication.class, args);
     }
 
 

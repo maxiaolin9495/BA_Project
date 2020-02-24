@@ -29,7 +29,7 @@ public class BackendTokenControllerTest {
     private static final String VALID_VIN = "validVehicle";
     private static final String INVALID_VIN = "invalidVehicle";
     private static final String PASSWORD = "password";
-    private static final String INDEX = "automakerA";
+    private static final String INDEX = "automakera";
     private static final String VALID_AUDIENCE = "rcaA ltcaA";
     private static final String INVALID_AUDIENCE = "rcaB";
     private static final String VALID_TOKEN = "validToken";

@@ -66,7 +66,7 @@ public class CACertificateController {
     @RequestMapping(method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestCertificate")
-    public ResponseEntity requestCertificate(@RequestHeader(value = "Authroization") String token,
+    public ResponseEntity requestCertificate(@RequestHeader(value = "Authorization") String token,
                                              @RequestParam(value = "id") String id) throws Exception {
         log.info("receive RCAC request");
 

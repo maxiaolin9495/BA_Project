@@ -31,7 +31,7 @@ public class CACertificateController {
 
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestLTC")
-    public ResponseEntity<CertificateResponse> requestLTC(@RequestHeader(value = "Authroization") String token,
+    public ResponseEntity<CertificateResponse> requestLTC(@RequestHeader(value = "Authorization") String token,
                                                             @RequestParam(value = "publicKeyLTC") String key,
                                                             @RequestParam(value = "vin") String id) throws Exception {
         log.info("receive LTC request");

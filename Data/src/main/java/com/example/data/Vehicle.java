@@ -1,8 +1,6 @@
 package com.example.data;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Vehicle {
@@ -20,7 +18,7 @@ public class Vehicle {
         return password;
     }
 
-    @JsonGetter(value = "VIN")
+
     public String getVin() {
         return vin;
     }
@@ -45,7 +43,6 @@ public class Vehicle {
         this.password = password;
     }
 
-    @JsonSetter(value = "VIN")
     public void setVin(String vin) {
         this.vin = vin;
     }

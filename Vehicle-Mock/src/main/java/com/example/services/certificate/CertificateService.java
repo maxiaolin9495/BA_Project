@@ -113,7 +113,7 @@ public class CertificateService {
             map.add("vin", vin);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-            ResponseEntity<CertificateResponse> response = restTemplate.exchange(rootCAEndpoint, HttpMethod.POST, request, CertificateResponse.class);
+            ResponseEntity<CertificateResponse> response = restTemplate.exchange(ltCAEndpoint, HttpMethod.POST, request, CertificateResponse.class);
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
             LTC = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(
@@ -123,7 +123,7 @@ public class CertificateService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to update root certificate");
+            throw new RuntimeException("Failed to update LTC certificate");
         }
 
     }
