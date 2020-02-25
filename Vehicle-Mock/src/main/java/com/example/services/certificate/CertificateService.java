@@ -31,6 +31,9 @@ public class CertificateService {
     @Autowired
     RestTemplate restTemplate;
 
+    @Value("${rootca.self.id}")
+    private String rootCASelfId;
+
     @Value("${rootca.endpoint}")
     private String rootCAEndpoint;
 
@@ -66,11 +69,11 @@ public class CertificateService {
 
     public void requestRootCertificate(String rcaId){
         try {
-
             MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             if(token == null) {
+                logger.info("Request token first");
                 token = tokenService.requestToken(password, vin, audience);
             }
             headers.add("Authorization", token);
@@ -129,7 +132,17 @@ public class CertificateService {
     }
 
 
+    public boolean isSelfRootCA(String rootCAId){
+        return this.rootCASelfId.equals(rootCAId);
+    }
 
-
+    public boolean isCAIdValid(String rootCAId){
+        for (String s: caIds){
+            if(s.equals(rootCAId)){
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

@@ -1,23 +1,161 @@
 version: '3.6'
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.1
-    container_name: elasticsearch
+  azs:
+    build: ./authorization_server_mock
     environment:
-      - bootstrap.memory_lock=true
-      - ES_JAVA_OPTS=-Xms256M -Xmx256M
-      - ELASTIC_PASSWORD=changeme
+      - TOKEN_ISSUER=azsA
+      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTIC_SEARCH_INDEX=automakera
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+      - PUBLIC_KEY=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCNPx8Kce+duv6B/jvfrAx4t0q44BipygZEKiRAGwfg6RsOpDhTI7j1Zt2czBxAVcUtcM6owJrAS0lRARnUrjDnUr3HsXsY0cq2AftibWyb9fBvlGj7tujkEnWMHv7Ksxt0Km1sxve+rE51fk3NiuAmNms0xqTJtSAnAhLKO2v33wIDAQAB
+      - PRIVATE_KEY=MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAI0/Hwpx7526/oH+O9+sDHi3SrjgGKnKBkQqJEAbB+DpGw6kOFMjuPVm3ZzMHEBVxS1wzqjAmsBLSVEBGdSuMOdSvcexexjRyrYB+2JtbJv18G+UaPu26OQSdYwe/sqzG3QqbWzG976sTnV+Tc2K4CY2azTGpMm1ICcCEso7a/ffAgMBAAECgYBTEQIiVGtE6cnvjSKNIlObUsAhBbm7cNJKmDYFdWAmxzBgZfex/VozCDHgmrEqrMZvON5wpATefeg6OVmFmIOtQx5JW4E3QHd31k3Qrl1Gdc2SfSAsTM0YD1jug3t/fwJ6Q62eHOQd9pBm7JIwb+CfY08qc6+hoJp7OPYWxdW90QJBAOd250wd9nF5wK/2RtdWbL5u9DY4uoTyyxRUYAVN8jlHOIlnHioc4kPvvEo/Rjk0vltPzg2U/xFcNVcguTZNLP0CQQCcOAjw1La1tzRvaCzC9gSUpCNyybRSq8sXVh/Brs5+/ywcrMJ1/0EH82daVZ51rQ7Mizq05zZ+HgMZr/Pmyf0LAkEAujqfpE1jMC+uiaTToIQHoDxzPoDsCPWz0RqF2x64qb8UzPBrg6STo+dqDi7UmEhIc/1EowbjJhuTSxOoEPmNHQJAWQVNgv+URqTpynqQ12CeZ53JXYY3rcyb5OZ9Hj/hCFmc55JDFj6o7kD0KnQT4ncFseW9RI1lbiToG2E7Gc8M1QJBAMRpWW7oEQkX6FzhvdJCqv+f11yN5SAVZUuiOyoMsTER41zD6vkwKxQhscPgL+LLMVXKu60GAInp0OANa+pGGfA=
+    ports:
+      - 8890:8890
+
+  azs_b:
+    build: ./authorization_server_mock
+    environment:
+      ## adjust the routing key!!
+      - TOKEN_ISSUER=azsB
+      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTIC_SEARCH_INDEX=automakera
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+      - PUBLIC_KEY=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCNPx8Kce+duv6B/jvfrAx4t0q44BipygZEKiRAGwfg6RsOpDhTI7j1Zt2czBxAVcUtcM6owJrAS0lRARnUrjDnUr3HsXsY0cq2AftibWyb9fBvlGj7tujkEnWMHv7Ksxt0Km1sxve+rE51fk3NiuAmNms0xqTJtSAnAhLKO2v33wIDAQAB
+      - PRIVATE_KEY=MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAI0/Hwpx7526/oH+O9+sDHi3SrjgGKnKBkQqJEAbB+DpGw6kOFMjuPVm3ZzMHEBVxS1wzqjAmsBLSVEBGdSuMOdSvcexexjRyrYB+2JtbJv18G+UaPu26OQSdYwe/sqzG3QqbWzG976sTnV+Tc2K4CY2azTGpMm1ICcCEso7a/ffAgMBAAECgYBTEQIiVGtE6cnvjSKNIlObUsAhBbm7cNJKmDYFdWAmxzBgZfex/VozCDHgmrEqrMZvON5wpATefeg6OVmFmIOtQx5JW4E3QHd31k3Qrl1Gdc2SfSAsTM0YD1jug3t/fwJ6Q62eHOQd9pBm7JIwb+CfY08qc6+hoJp7OPYWxdW90QJBAOd250wd9nF5wK/2RtdWbL5u9DY4uoTyyxRUYAVN8jlHOIlnHioc4kPvvEo/Rjk0vltPzg2U/xFcNVcguTZNLP0CQQCcOAjw1La1tzRvaCzC9gSUpCNyybRSq8sXVh/Brs5+/ywcrMJ1/0EH82daVZ51rQ7Mizq05zZ+HgMZr/Pmyf0LAkEAujqfpE1jMC+uiaTToIQHoDxzPoDsCPWz0RqF2x64qb8UzPBrg6STo+dqDi7UmEhIc/1EowbjJhuTSxOoEPmNHQJAWQVNgv+URqTpynqQ12CeZ53JXYY3rcyb5OZ9Hj/hCFmc55JDFj6o7kD0KnQT4ncFseW9RI1lbiToG2E7Gc8M1QJBAMRpWW7oEQkX6FzhvdJCqv+f11yN5SAVZUuiOyoMsTER41zD6vkwKxQhscPgL+LLMVXKu60GAInp0OANa+pGGfA=
+    ports:
+      - 8891:8890
+
+  root-ca-mock:
+    build: ./root_ca_mock
+    environment:
+      - BACKEND_AZS_ID=azsA
+      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTIC_SEARCH_INDEX=automakera
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+      - BACKEND_CA_ID=rcaA
+      - BACKEND_CAS_ID=rcaA, rcaB
+      - BACKEND_CAS_ID=http://root-ca-mock:8900/v1/requestCertificateForRoot, http://root-ca-mock-b:8900/v1/requestCertificateForRoot
+      - PUBLIC_KEY_ENDPOINT=http://azs:8890/v1/publicKey
+      - RABBITMQ_HOST=rabbit
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=rabbitmq
+      - RABBITMQ_PASSWORD=rabbitmq
+      - ROUTING_KEY=rcaA
+      - TOPIC_EXCHANGE_NAME=notification
+      - ROUTING_KEY_LTCA=ltcaA
+      - ROUTING_KEY_VEHICLE=vehicleA1
+      - ROUTING_KEY_VEHICLE=rcaB
+    ports:
+      - 8900:8900
+
+  root-ca-mock-b:
+    build: ./root_ca_mock
+    environment:
+      ## adjust the routing key!!
+      - BACKEND_AZS_ID=azsB
+      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTIC_SEARCH_INDEX=automakera
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+      - BACKEND_CA_ID=rcaB
+      - BACKEND_CAS_ID=rcaA, rcaB
+      - BACKEND_CAS_ID=http://root-ca-mock:8900/v1/requestCertificateForRoot, http://root-ca-mock-b:8900/v1/requestCertificateForRoot
+      - PUBLIC_KEY_ENDPOINT=http://azs_b:8890/v1/publicKey
+      - RABBITMQ_HOST=rabbit
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=rabbitmq
+      - RABBITMQ_PASSWORD=rabbitmq
+      - ROUTING_KEY=rcaB
+      - TOPIC_EXCHANGE_NAME=notification
+      - ROUTING_KEY_LTCA=ltcaB
+      - ROUTING_KEY_VEHICLE=vehicleB1
+      - ROUTING_KEY_VEHICLE=rcaA
+    ports:
+      - 8901:8900
+
+  ltca-mock:
+    build: ./root_ca_mock
+    environment:
+      - TOKEN_ISSUER=azsA
+      - BACKEND_CA_ID=ltcaA
+      - ROOT_CA_ID=rcaA
+      - ROOT_CA_ENDPOINR=http://root-ca-mock:8900/v1/requestCertificateForRoot
+      - PUBLIC_KEY_ENDPOINT=http://azs:8890/v1/publicKey
+      - RABBITMQ_HOST=rabbit
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=rabbitmq
+      - RABBITMQ_PASSWORD=rabbitmq
+      - ROUTING_KEY=ltcaA
+      - TOPIC_EXCHANGE_NAME=notification
+    ports:
+      - 8910:8910
+
+  ltca-mock-b:
+    build: ./root_ca_mock
+    environment:
+      - TOKEN_ISSUER=azsA
+      - BACKEND_CA_ID=ltcaB
+      - ROOT_CA_ID=rcaB
+      - ROOT_CA_ENDPOINR=http://root-ca-mock-b:8900/v1/requestCertificateForRoot
+      - PUBLIC_KEY_ENDPOINT=http://azs-b:8890/v1/publicKey
+      - RABBITMQ_HOST=rabbit
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=rabbitmq
+      - RABBITMQ_PASSWORD=rabbitmq
+      - ROUTING_KEY=ltcaB
+      - TOPIC_EXCHANGE_NAME=notification
+    ports:
+      - 8911:8910
+
+  vehicle-mock:
+    build: ./Vehicle-Mock
+    environment:
+      - VEHICLE_VIN=vehicleA1
+      - VEHICLE_PASSWORD=password12
+      - VEHICLE_AUDIENCE=rcaA ltcaA
+      - BACKEND_CAS_ID=rcaA, rcaB
+      - RABBITMQ_HOST=rabbit
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=rabbitmq
+      - RABBITMQ_PASSWORD=rabbitmq
+      - ROUTING_KEY=vehicleA1
+      - TOPIC_EXCHANGE_NAME=notification
+      - BACKEND_TOKEN_ENDPOINT=http://azs:8890/v1/requestToken
+      - LTCA_ENDPOINT=http://ltca-mock:8910/v1/requestLTC
+      - ROOTCA_ENDPOINT=http://root-ca-mock:8900/v1/requestCertificate
     #    networks:
     #      - docker-elk
-    volumes:
-      - type: bind
-        source: ./elasticsearch/master/es-master.yml
-        target: /usr/share/elasticsearch/config/elasticsearch.yml
-        read_only: true
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
     ports:
-      - 9200:9200
-      - 9300:9300
+      - 8100:8100
+  vehicle-mock-b:
+    build: ./Vehicle-Mock
+    environment:
+      - VEHICLE_VIN=vehicleB1
+      - VEHICLE_PASSWORD=password12
+      - VEHICLE_AUDIENCE=rcaB ltcaB
+      - BACKEND_CAS_ID=rcaA, rcaB
+      - RABBITMQ_HOST=rabbit
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=rabbitmq
+      - RABBITMQ_PASSWORD=rabbitmq
+      - ROUTING_KEY=vehicleB1
+      - TOPIC_EXCHANGE_NAME=notification
+      - BACKEND_TOKEN_ENDPOINT=http://azs_b:8890/v1/requestToken
+      - LTCA_ENDPOINT=http://ltca-mock-b:8910/v1/requestLTC
+      - ROOTCA_ENDPOINT=http://root-ca-mock-b:8900/v1/requestCertificate
+    #    networks:
+    #      - docker-elk
+    ports:
+      - 8101:8100
+  write-in:
+    build: ./authorization_server_mock
+    environment:
+      - TOKEN_ISSUER=azsA
+      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    ports:
+      - 8920:8920

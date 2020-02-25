@@ -10,54 +10,29 @@ Long-Term CA(LTCA): is a subordinate CA of a root CA, it issues LTC for the vehi
 token: is an object encapsulating the security identity of a vehicle. Vehicles can use this token to retrieve a root certificate, or apply a new LTC by a LTCA
 
 
+## Design Structure
+Database with elasticsearch
 
-## Status
-###Vehicle Mock
-needed means not yet iomplemented.
-mock means the input and output of this function/api has already been definied. 
-finished means the function has been totally implemented.
+Notification through RabbitMq
+
+## Start
+
+start
+```
+docker build -t baproject:0.0.1SNAPSHOT . to build a general work image
 
 ```
-Rest-Apis:
-manipulation(finished)
-buildConnection(needed)
-receive(needed)
-
-Functions: 
-generateSTK(mock)
-requestToken(finished)
-encryptData(finished)
-buildConnection(needed)
-validateToken(finshed)
-validateSignature(finished)
-send(needed)
-receive(needed)
+Then 
 ```
-
-### Backend Mock
+docker-compose build
 
 ```
-Rest-Apis:
-requestToken(finished)
-getPublicKey(needed)
+Finally
+```
+docker-compose up
 
-Functions: 
-generateToken(finished)
-validateToken(finished)
-sendPublicKey(needed)
-validateSignature(finished)
 ```
 
-### Service Mock
-```
-Rest-Apis:
-saveData(needed)
-getData(needed)
-
-Functions: 
-validateToken(partly finished)
-validateSignature(needed)
-```
 
 
 

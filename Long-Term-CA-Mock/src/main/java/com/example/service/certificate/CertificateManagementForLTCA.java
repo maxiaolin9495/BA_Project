@@ -26,6 +26,9 @@ public class CertificateManagementForLTCA extends CertificateManagement {
     @Value("${backend.ca.id}")
     String caId;
 
+    @Value("${rootca.id}")
+    String rootCAId;
+
     @Value("${root.ca.endpoint}")
     String rootCAEndpoint;
 
@@ -41,6 +44,7 @@ public class CertificateManagementForLTCA extends CertificateManagement {
     public void requestIntermediateCertificate(){
         try {
             CertAndKeyGen keyGen = new CertAndKeyGen("RSA", "SHA1WithRSA", null);
+            logger.info("generate a key pair");
             keyGen.generate(1024);
             PUBLIC_KEY = keyGen.getPublicKey();
             PRIVATE_KEY = keyGen.getPrivateKey();
@@ -49,12 +53,14 @@ public class CertificateManagementForLTCA extends CertificateManagement {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-
+            logger.info("build Request");
             map.add("publicKeyLTCAC", new String(Base64.getEncoder().encode(PUBLIC_KEY.getEncoded())));
             map.add("LTCA_id", caId);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+            logger.info("update LTCA certificate");
             ResponseEntity<CertificateResponse> response = restTemplate.exchange(rootCAEndpoint, HttpMethod.POST, request, CertificateResponse.class);
+
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
             longTermCACertificate = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(
@@ -62,9 +68,12 @@ public class CertificateManagementForLTCA extends CertificateManagement {
                             response.getBody().getCertificate()
                     )));
 
+            logger.info("Successfully");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to update root certificate");
+
+            logger.info("Failed to update LTCA certificate");
+            throw new RuntimeException("Failed to update LTCA certificate");
         }
 
     }
@@ -73,9 +82,11 @@ public class CertificateManagementForLTCA extends CertificateManagement {
         if(longTermCACertificate == null) requestIntermediateCertificate();
         try {
             X509Certificate intermediateCertificate = signCertificate(publicKey, vin, longTermCACertificate, PRIVATE_KEY);
+            logger.info("LT certificate is issued");
             return intermediateCertificate;
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("Failed to issue a new LT certificate");
             throw new RuntimeException("Failed to create long-term certificate");
         }
 
@@ -84,6 +95,10 @@ public class CertificateManagementForLTCA extends CertificateManagement {
     public X509Certificate getCertificate() {
         if(longTermCACertificate == null) requestIntermediateCertificate();
         return longTermCACertificate;
+    }
+
+    public String getRootCAId() {
+        return rootCAId;
     }
 
     public String getCaId() {

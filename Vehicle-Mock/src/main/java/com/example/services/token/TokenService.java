@@ -28,6 +28,7 @@ public class TokenService {
 
     public String requestToken(String password, String vin, String audience) throws Exception{
         try{
+            logger.info("Build token request");
             MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -36,8 +37,10 @@ public class TokenService {
             map.add("vin", vin);
             map.add("audience", audience);
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+            logger.info("Send token request");
             ResponseEntity<TokenResponse> response = restTemplate.exchange(tokenEndpoint, HttpMethod.POST, request, TokenResponse.class);
             String token = response.getBody().getToken();
+            logger.info("Receive token " + token);
             return token;
         } catch(HttpClientErrorException | HttpServerErrorException e) {
             logger.info("Backend rejects request");

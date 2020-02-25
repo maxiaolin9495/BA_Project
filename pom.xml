@@ -19,6 +19,8 @@
         <jaxb.version>2.3.0</jaxb.version>
         <elasticsearch.version>7.4.1</elasticsearch.version>
         <fastjson.version>1.2.62</fastjson.version>
+        <docker.prefix>maxiaolin/ba_project</docker.prefix>
+        <docker.image.prefix>springboot</docker.image.prefix>
     </properties>
 
     <dependencyManagement>
@@ -100,7 +102,11 @@
                 <artifactId>bcpkix-jdk15on</artifactId>
                 <version>1.64</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-amqp</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
             <!-- Mockito -->
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -120,23 +126,23 @@
                 <artifactId>rt.jar</artifactId>
                 <version>1.8</version>
                 <scope>system</scope>
-                <systemPath>${java.home}/lib/rt.jar</systemPath>
+                <systemPath>${project.basedir}/lib/rt.jar</systemPath>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
-        <module>Authorization-Server-Mock</module>
-        <module>Authorization-Server-Mock-B</module>
-        <module>CA-Mock</module>
+        <module>authorization_server_mock</module>
+        <module>ca_mock</module>
         <module>Data</module>
         <module>dataStore</module>
         <module>Long-Term-CA-Mock</module>
-        <module>Root-CA-Mock</module>
+        <module>RabbitMQ-Configuration</module>
+        <module>root_ca_mock</module>
         <module>Vehicle-Mock</module>
-        <module>Vehicle-Mock-B</module>
         <module>Write-Test-Data-In</module>
 
     </modules>
+
     <packaging>pom</packaging>
 </project>

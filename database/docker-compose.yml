@@ -1,0 +1,43 @@
+version: '3.6'
+services:
+  ##used for notification
+  rabbit:
+    image: "rabbitmq:3-management"
+    hostname: "rabbit"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq1"
+      # volumes:
+      #- "./enabled_plugins:/etc/rabbitmq/enabled_plugins"
+      #- "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
+      #- "./autocluster-0.4.1.ez:/usr/lib/rabbitmq/lib/rabbitmq_server-3.5.5/plugins/autocluster-0.4.1.ez"
+
+  ##used for database
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.1
+    container_name: elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms256M -Xmx256M
+      - ELASTIC_PASSWORD=changeme
+    #    networks:
+    #      - docker-elk
+    volumes:
+      - type: bind
+        source: ./elasticsearch/master/es-master.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
