@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import sun.util.logging.resources.logging;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
@@ -112,6 +113,8 @@ public class CACertificateController {
             produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestCertificate")
     public ResponseEntity requestCertificate(@RequestHeader(value = "Authorization") String token,
                                              @RequestParam(value = "id") String id) throws Exception {
+        //sleep for a better logging output
+        Thread.sleep(50);
         log.info("Vehicle requests root certificate of " + id);
 
         if(token == null) return ResponseEntity.status(401).build();

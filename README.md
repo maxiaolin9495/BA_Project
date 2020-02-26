@@ -17,7 +17,7 @@ Notification through RabbitMq
 
 ## Start
 
-start
+Build base image
 ```
 docker build -t baproject:latest . to build a general work image
 
@@ -25,6 +25,14 @@ docker build -t baproject:latest . to build a general work image
 Then 
 ```
 docker-compose build
+
+```
+
+Start the database in path \database (ElasticSearch & RabbitMQ)
+
+```
+cd database
+docker-compose up
 
 ```
 Finally

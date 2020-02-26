@@ -79,7 +79,6 @@ public class ManipulationController {
             } else if(certificateService.isCAIdValid(rootCAId)){
                 log.info("Request new root certificate from own root CA");
                 certificateService.requestRootCertificate(rootCAId);
-                log.info("Received");
                 return;
             }
         } catch (IOException e) {
