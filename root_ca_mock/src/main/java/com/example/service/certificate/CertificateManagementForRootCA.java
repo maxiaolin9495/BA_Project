@@ -20,6 +20,7 @@ import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class CertificateManagementForRootCA extends CertificateManagement {
         certificateStore = new HashMap<>();
         caEndpoints = new HashMap<>();
         for(int i = 0; i< caIds.length; i++) {
-            caEndpoints.put(caIds[i], urls[1]);
+            caEndpoints.put(caIds[i], urls[i]);
             certificateStore.put(caIds[i], null);
         }
     }
@@ -98,13 +99,12 @@ public class CertificateManagementForRootCA extends CertificateManagement {
             createRootCertificate();
         }
         try {
+            logger.info("Request root certificate from root CA " +caId);
             MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
             map.add("rootCAId", this.caId);
             map.add("id", caId);
-
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
             ResponseEntity<CertificateResponse> response = restTemplate.exchange(caEndpoints.get(caId), HttpMethod.POST, request, CertificateResponse.class);
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -112,10 +112,11 @@ public class CertificateManagementForRootCA extends CertificateManagement {
                     Base64.getDecoder().decode(
                             response.getBody().getCertificate()
                     )));
+            logger.info("Received root certificate of " + caId);
             this.certificateStore.put(caId, certificate);
         } catch(HttpClientErrorException | HttpServerErrorException e) {
             logger.info("Backend rejects request");
-            throw new RuntimeException("Somethings went wrong during request Token " + e.getMessage());
+            throw new RuntimeException("Somethings went wrong during request root certificate of " + caId + e.getMessage());
         } catch(CertificateException e){
             logger.info("received a wrong certificate.");
         }

@@ -19,7 +19,7 @@ Notification through RabbitMq
 
 start
 ```
-docker build -t baproject:0.0.1SNAPSHOT . to build a general work image
+docker build -t baproject:latest . to build a general work image
 
 ```
 Then 

@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
+@PropertySource("application.properties")
 @ActiveProfiles({"test"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TokenGenerationServiceTest {
@@ -58,7 +60,7 @@ public class TokenGenerationServiceTest {
             TokenResponse tokenResponse = tokenGenerationService.generateToken(VALID_VIN, audience);
 
             SignedJWT signedJWT = SignedJWT.parse(tokenResponse.getToken());
-            if(! (validateSignature(signedJWT) &&
+            if(!(validateSignature(signedJWT) &&
                     validateIssuer(signedJWT.getJWTClaimsSet().getIssuer()) &&
                     validateExpiresAt(signedJWT.getJWTClaimsSet().getExpirationTime()) &&
                     validateAudience(signedJWT.getJWTClaimsSet().getAudience())))

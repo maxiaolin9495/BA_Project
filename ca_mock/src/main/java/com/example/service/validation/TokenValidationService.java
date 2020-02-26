@@ -85,6 +85,7 @@ public class TokenValidationService {
         try {
             ResponseEntity<PublicKeyResponse> response = restTemplate.getForEntity(azsPublicKeyEndpoint, PublicKeyResponse.class);
             PublicKeyResponse publicKeyResponse = response.getBody();
+            log.info("Received public key from azs " + publicKeyResponse.getAzsId());
             if(!publicKeyResponse.getAzsId().equals(validIssuer)) return;
             BACKEND_PUBLIC_KEY = response.getBody().getPublicKey();
         } catch (HttpClientErrorException | HttpServerErrorException e) {

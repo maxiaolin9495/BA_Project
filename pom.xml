@@ -122,6 +122,13 @@
             </dependency>
 
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.10.1</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>sun.jdk</groupId>
                 <artifactId>rt.jar</artifactId>
                 <version>1.8</version>
@@ -136,13 +143,45 @@
         <module>ca_mock</module>
         <module>Data</module>
         <module>dataStore</module>
-        <module>Long-Term-CA-Mock</module>
+        <module>long_term_ca_mock</module>
         <module>RabbitMQ-Configuration</module>
         <module>root_ca_mock</module>
-        <module>Vehicle-Mock</module>
+        <module>vehicle_mock</module>
         <module>Write-Test-Data-In</module>
 
     </modules>
 
     <packaging>pom</packaging>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.2</version>
+                    <configuration>
+                        <fork>true</fork>
+                        <compilerArgument>-XDignore.symbol.file</compilerArgument>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                        <dockerDirectory>src/main/docker</dockerDirectory>
+                        <resources>
+                            <resource>
+                                <targetPath>/</targetPath>
+                                <directory>${project.build.directory}</directory>
+                                <include>${project.build.finalName}.jar</include>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

@@ -71,7 +71,7 @@ public class TokenGenerationService {
         SignedJWT signedJWT =  new SignedJWT(new JWSHeader(JWSAlgorithm.RS512), claimsSet);
         signedJWT.sign(jwsSigner);
 
-        log.info("token is generated successfully");
+        log.info("Token is generated successfully");
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setToken(signedJWT.serialize());
         tokenResponse.setExp(exp.toString());

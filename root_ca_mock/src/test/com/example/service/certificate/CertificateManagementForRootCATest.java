@@ -36,7 +36,6 @@ public class CertificateManagementForRootCATest {
     String rootCAEndpoint = "http://localhost:8890/v1/requestCertificate";
     String rootCAEndpoint2 = "http://localhost:8891/v1/requestCertificate";
 
-    X509Certificate rootCACertificate;
 
     @Mock
     RestTemplate restTemplate;

@@ -1,6 +1,7 @@
 package com.example.RabbitMQ;
 
-import com.example.data.CertificateUpdateNotifyication;
+import com.example.data.CertificateUpdateNotification;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -19,7 +20,8 @@ public class Sender {
     @Value(value = "${rabbit.mq.topic-exchange-name}")
     private String TOPIC_EXCHANGE_NAME;
 
-    public void send(CertificateUpdateNotifyication certificateUpdateNotifyication, String routingKey) {
-        rabbitTemplate.convertAndSend(TOPIC_EXCHANGE_NAME, routingKey, certificateUpdateNotifyication);
+    public void send(CertificateUpdateNotification certificateUpdateNotification, String routingKey) {
+
+        rabbitTemplate.convertAndSend(TOPIC_EXCHANGE_NAME, routingKey, certificateUpdateNotification);
     }
 }
