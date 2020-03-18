@@ -17,10 +17,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CertificateService {
 
@@ -74,22 +71,23 @@ public class CertificateService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             if(token == null) {
-                logger.info("Request token first");
                 token = tokenService.requestToken(password, vin, audience);
             }
+            Date d1 = new Date(System.currentTimeMillis());
             headers.add("Authorization", token);
 
             map.add("id", rcaId);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
             ResponseEntity<CertificateResponse> response = restTemplate.exchange(rootCAEndpoint, HttpMethod.POST, request, CertificateResponse.class);
+            Date d2 = new Date(System.currentTimeMillis());
+            logger.info("Time used to request Root Certificate is " + (d2.getTime()-d1.getTime()) + " ms");
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
             rootCertificateStorage.put(rcaId ,(X509Certificate) cf.generateCertificate(new ByteArrayInputStream(
                     Base64.getDecoder().decode(
                             response.getBody().getCertificate()
                     ))));
-            logger.info("Received root certificate of root CA " + rcaId);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to update root certificate");
@@ -99,13 +97,15 @@ public class CertificateService {
 
     public void requestLTC(){
         try {
+            Date d1 = new Date(System.currentTimeMillis());
             CertAndKeyGen keyGen = new CertAndKeyGen("RSA", "SHA1WithRSA", null);
-            logger.info("Generate key pairs");
+
             keyGen.generate(1024);
             PUBLIC_KEY = keyGen.getPublicKey();
             PRIVATE_KEY = keyGen.getPrivateKey();
+            Date d2 = new Date(System.currentTimeMillis());
+            logger.info("Time used to generate new LTC key pair is " + (d2.getTime()-d1.getTime()) + " ms");
 
-            logger.info("Build LT certificate request");
 
             MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
             HttpHeaders headers = new HttpHeaders();
@@ -113,6 +113,7 @@ public class CertificateService {
             if(token == null) {
                 token = tokenService.requestToken(password, vin, audience);
             }
+            Date d3 = new Date(System.currentTimeMillis());
             headers.add("Authorization", token);
 
             map.add("publicKeyLTC", new String(Base64.getEncoder().encode(PUBLIC_KEY.getEncoded())));
@@ -121,8 +122,10 @@ public class CertificateService {
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
             ResponseEntity<CertificateResponse> response = restTemplate.exchange(ltCAEndpoint, HttpMethod.POST, request, CertificateResponse.class);
+            Date d4 = new Date(System.currentTimeMillis());
+            logger.info("Time used to request a new LTC is " + (d4.getTime()-d3.getTime()) + " ms");
+
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            logger.info("Receive LT certificate response");
             LTC = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(
                     Base64.getDecoder().decode(
                             response.getBody().getCertificate()

@@ -38,11 +38,9 @@ public class ManipulationController {
         for(String caId: caIds) {
             log.info("Update root certificate of root CA "  + caId);
             certificateService.requestRootCertificate(caId);
-            log.info("received root certificate of root CA "  + caId);
         }
         log.info("apply LT certificate");
         certificateService.requestLTC();
-        log.info("received LT certificate");
         return ResponseEntity.ok().build();
     }
 
@@ -56,9 +54,6 @@ public class ManipulationController {
     @RabbitListener(queues = "#{autoDeleteQueue1.name}")
     public void receiveDirectQueue(Message message) throws InterruptedException {
 
-        //sleep for a better logging output
-        Thread.sleep(1000);
-
         log.info("Receive an root certificate update message");
 
         try {
@@ -68,16 +63,14 @@ public class ManipulationController {
             log.info("receive certificate update notification, root CA " + rootCAId + " has updated its certificate" );
 
             if(certificateService.isSelfRootCA(rootCAId)){
-                log.info("The root CA in own certificate chain");
-                log.info("Need update root certificate and request new LTC");
-                log.info("Update own root certificate");
+                log.info("Update root certificate of root CA "  + rootCAId);
                 certificateService.requestRootCertificate(rootCAId);
-                log.info("Update own LTC");
+                log.info("apply LTC");
                 certificateService.requestLTC();
                 log.info("Update Successfully");
                 return;
             } else if(certificateService.isCAIdValid(rootCAId)){
-                log.info("Request new root certificate from own root CA");
+                log.info("Request root certificate of root CA from own root CA"  + rootCAId);
                 certificateService.requestRootCertificate(rootCAId);
                 return;
             }

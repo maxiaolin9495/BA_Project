@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
+import java.util.Date;
 
 @Controller
 @RequestMapping(value="/v1")
@@ -58,6 +59,7 @@ public class CACertificateController {
                                                             @RequestParam(value = "vin") String id) throws Exception {
         log.info("Receive LTC request with vin " + id);
 
+        Date d1 = new Date(System.currentTimeMillis());
         if(token == null){
             log.info("Request without token, invalid request");
             return ResponseEntity.status(401).build();
@@ -66,11 +68,14 @@ public class CACertificateController {
             log.info("Invalid Token, reject the request");
             return ResponseEntity.status(401).build();
         }
-        log.info("Valid token, start issuing certificate");
         X509Certificate certificate = certificateManagement.createLTC(key, id);
         CertificateResponse certificateResponse= new CertificateResponse();
         certificateResponse.setCaId(certificateManagement.getCaId());
         certificateResponse.setCertificate(new String(Base64.getEncoder().encode(certificate.getEncoded())));
+
+        Date d2 = new Date(System.currentTimeMillis());
+
+        log.info("Time used to generate a new LTC is" + (d2.getTime() - d1.getTime()) + " ms" );
         return ResponseEntity.ok(certificateResponse);
     }
 

@@ -1,0 +1,1 @@
+#!/bin/bashcd database docker-compose up -d

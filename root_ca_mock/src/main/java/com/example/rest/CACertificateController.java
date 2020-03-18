@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
 
 @Controller
 @RequestMapping(value="/v1")
@@ -65,23 +66,15 @@ public class CACertificateController {
     @RabbitListener(queues = "#{autoDeleteQueue1.name}")
     public void receiveDirectQueue(Message message) throws InterruptedException {
 
-        //sleep for a better logging output
-        Thread.sleep(3000);
-
         try {
             CertificateUpdateNotification certificateUpdateNotification = objectMapper.readValue(message.getBody(), CertificateUpdateNotification.class);
             log.info("Receive a certificate update notification from root CA " + certificateUpdateNotification.getRootCAId());
             if (certificateManagement.isCAIdValid(certificateUpdateNotification.getRootCAId())){
                 certificateManagement.updateRootCertificate(certificateUpdateNotification.getRootCAId());
             }
-            //provide better logging
-            Thread.sleep(2000);
             sender.send(certificateUpdateNotification, vehicleRoutingKey);
         } catch (IOException e) {
             log.error("Failed to read the notification" + e.getMessage());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            log.error("Failed to let thread sleep " + e.getMessage());
         }
 
     }
@@ -113,18 +106,21 @@ public class CACertificateController {
             produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestCertificate")
     public ResponseEntity requestCertificate(@RequestHeader(value = "Authorization") String token,
                                              @RequestParam(value = "id") String id) throws Exception {
-        //sleep for a better logging output
-        Thread.sleep(50);
-        log.info("Vehicle requests root certificate of " + id);
+        Date d1 = new Date(System.currentTimeMillis());
 
         if(token == null) return ResponseEntity.status(401).build();
+        Date d3 = new Date(System.currentTimeMillis());
         if(!tokenValidationService.validateToken(token)) return ResponseEntity.status(401).build();
-
+        Date d4 = new Date(System.currentTimeMillis());
+        log.info("time used to validate the token is " + (d4.getTime() - d3.getTime()) + " ms" );
         X509Certificate certificate = certificateManagement.getCertificate(id);
         CertificateResponse certificateResponse= new CertificateResponse();
         certificateResponse.setCaId(id);
         certificateResponse.setCertificate(new String(Base64.getEncoder().encode(certificate.getEncoded())));
-        log.info("Request with valid token, send certificate of " + id + " back");
+
+        Date d2 = new Date(System.currentTimeMillis());
+
+        log.info("Time used to return a root certificate is" + (d2.getTime() - d1.getTime()) + " ms" );
         return ResponseEntity.ok(certificateResponse);
     }
 
@@ -133,7 +129,6 @@ public class CACertificateController {
             produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestCertificateForRoot")
     public ResponseEntity requestCertificateForRoot(@RequestParam(value = "rootCAId") String rootCAId,
                                              @RequestParam(value = "id") String id) throws Exception {
-        log.info("Receive RCAC request, special for root CA " + rootCAId + ", sent by " + id);
         if(!Arrays.asList(caIds).contains(rootCAId)) return ResponseEntity.status(400).build();
 
         X509Certificate certificate = certificateManagement.getCertificate(id);
@@ -151,13 +146,10 @@ public class CACertificateController {
         CertificateUpdateNotification certificateUpdateNotification = new CertificateUpdateNotification();
         certificateUpdateNotification.setRootCAId(certificateManagement.getCaId());
 
-        log.info("Inform ltca A");
         sender.send(certificateUpdateNotification, ltcaRoutingKey);
 
-        log.info("Inform vehicle A1");
         sender.send(certificateUpdateNotification, vehicleRoutingKey);
 
-        log.info("Inform " + otherRCARoutingKey);
         sender.send(certificateUpdateNotification, otherRCARoutingKey);
 
         return ResponseEntity.ok().build();

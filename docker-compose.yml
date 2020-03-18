@@ -1,11 +1,51 @@
-version: '3.6'
+version: '3.3'
 services:
+  rabbit:
+    image: "rabbitmq:3-management"
+    hostname: "rabbit"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq1"
+      # volumes:
+      #- "./enabled_plugins:/etc/rabbitmq/enabled_plugins"
+      #- "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
+      #- "./autocluster-0.4.1.ez:/usr/lib/rabbitmq/lib/rabbitmq_server-3.5.5/plugins/autocluster-0.4.1.ez"
+
+    ##used for database
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.1
+    container_name: elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      #- ES_JAVA_OPTS=-Xms256M -Xmx256M
+      - ELASTIC_PASSWORD=changeme
+    #    networks:
+    #      - docker-elk
+    volumes:
+      - type: bind
+        source: ./database/elasticsearch/master/es-master.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
   azs:
     build: ./authorization_server_mock
     environment:
       - PORT=8890
       - TOKEN_ISSUER=azsA
-      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTIC_SEARCH_IP=elasticsearch:9200
       - ELASTIC_SEARCH_INDEX=automakera
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=changeme
@@ -19,7 +59,7 @@ services:
     environment:
       - PORT=8891
       - TOKEN_ISSUER=azsB
-      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTIC_SEARCH_IP=elasticsearch:9200
       - ELASTIC_SEARCH_INDEX=automakerb
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=changeme
@@ -33,7 +73,7 @@ services:
     environment:
       - PORT=8900
       - BACKEND_AZS_ID=azsA
-      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTIC_SEARCH_IP=elasticsearch:9200
       - ELASTIC_SEARCH_INDEX=automakera
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=changeme
@@ -41,7 +81,7 @@ services:
       - BACKEND_CAS_ID=rcaA, rcaB
       - BACKEND_CAS_URLS=http://root-ca-mock:8900/v1/requestCertificateForRoot, http://root-ca-mock-b:8901/v1/requestCertificateForRoot
       - PUBLIC_KEY_ENDPOINT=http://azs:8890/v1/publicKey
-      - RABBITMQ_HOST=192.168.99.100
+      - RABBITMQ_HOST=rabbit
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=rabbitmq
       - RABBITMQ_PASSWORD=rabbitmq
@@ -58,7 +98,7 @@ services:
     environment:
       - PORT=8901
       - BACKEND_AZS_ID=azsB
-      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTIC_SEARCH_IP=elasticsearch:9200
       - ELASTIC_SEARCH_INDEX=automakerb
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=changeme
@@ -66,7 +106,7 @@ services:
       - BACKEND_CAS_ID=rcaA, rcaB
       - BACKEND_CAS_URLS=http://root-ca-mock:8900/v1/requestCertificateForRoot, http://root-ca-mock-b:8901/v1/requestCertificateForRoot
       - PUBLIC_KEY_ENDPOINT=http://azs-b:8891/v1/publicKey
-      - RABBITMQ_HOST=192.168.99.100
+      - RABBITMQ_HOST=rabbit
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=rabbitmq
       - RABBITMQ_PASSWORD=rabbitmq
@@ -87,7 +127,7 @@ services:
       - ROOT_CA_ID=rcaA
       - ROOT_CA_ENDPOINT=http://root-ca-mock:8900/v1/requestLTCACertificate
       - PUBLIC_KEY_ENDPOINT=http://azs:8890/v1/publicKey
-      - RABBITMQ_HOST=192.168.99.100
+      - RABBITMQ_HOST=rabbit
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=rabbitmq
       - RABBITMQ_PASSWORD=rabbitmq
@@ -105,7 +145,7 @@ services:
       - ROOT_CA_ID=rcaB
       - ROOT_CA_ENDPOINT=http://root-ca-mock-b:8901/v1/requestLTCACertificate
       - PUBLIC_KEY_ENDPOINT=http://azs-b:8891/v1/publicKey
-      - RABBITMQ_HOST=192.168.99.100
+      - RABBITMQ_HOST=rabbit
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=rabbitmq
       - RABBITMQ_PASSWORD=rabbitmq
@@ -123,7 +163,7 @@ services:
       - VEHICLE_AUDIENCE=rcaA ltcaA
       - BACKEND_CAS_ID=rcaA, rcaB
       - ROOT_CA_SELF_ID=rcaA
-      - RABBITMQ_HOST=192.168.99.100
+      - RABBITMQ_HOST=rabbit
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=rabbitmq
       - RABBITMQ_PASSWORD=rabbitmq
@@ -144,7 +184,7 @@ services:
       - VEHICLE_AUDIENCE=rcaB ltcaB
       - BACKEND_CAS_ID=rcaA, rcaB
       - ROOT_CA_SELF_ID=rcaB
-      - RABBITMQ_HOST=192.168.99.100
+      - RABBITMQ_HOST=rabbit
       - RABBITMQ_PORT=5672
       - RABBITMQ_USERNAME=rabbitmq
       - RABBITMQ_PASSWORD=rabbitmq
@@ -158,7 +198,7 @@ services:
   write-in:
     build: ./Write-Test-Data-In
     environment:
-      - ELASTIC_SEARCH_IP=192.168.99.100:9200
+      - ELASTIC_SEARCH_IP=elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=changeme
     ports:

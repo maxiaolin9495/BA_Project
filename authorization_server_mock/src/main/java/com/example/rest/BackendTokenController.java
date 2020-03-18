@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping(value="/v1")
@@ -38,7 +35,7 @@ public class BackendTokenController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestToken")
     public ResponseEntity requestToken(@RequestParam(value = "password") String password, @RequestParam(value = "vin") String vin, @RequestParam(value = "audience") String aud) throws Exception {
-
+        Date d1 = new Date(System.currentTimeMillis());
         log.info("Received get Token request with vinId " + vin + ", password " + password + ", and target audience " + aud);
         if (aud == null || aud.length() == 0){
             log.info("invalid audience value");
@@ -59,23 +56,21 @@ public class BackendTokenController {
         List<String> storedAudience = Arrays.asList(v.getAudience());
         Set<String> audience = new HashSet<>();
 
-        log.info("Found vehicle with the same vinId" + vin + ", password correct");
         for (String s : auds)
             if (storedAudience.contains(s))
                 audience.add(s);
-        log.info("Final valid target audience " + Arrays.toString(audience.toArray()));
 
         TokenResponse tokenResponse = tokenGenerationService.generateToken(vin, audience);
 
-        log.info("Token is sent out");
+        Date d2 = new Date(System.currentTimeMillis());
+
+        log.info("Time used to generate a new Token is" + (d2.getTime() - d1.getTime()) + " ms" );
         return ResponseEntity.ok(tokenResponse);
 
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, path = "/publicKey")
     public ResponseEntity<PublicKeyResponse> requestPublicKey() throws Exception {
-
-        log.info("Received get Public Key request");
 
         String publicKey = tokenGenerationService.getBackendPublicKey();
         String azsId = tokenGenerationService.getIssuer();

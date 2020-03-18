@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.3'
 services:
   ##used for notification
   rabbit:
@@ -25,7 +25,7 @@ services:
     container_name: elasticsearch
     environment:
       - bootstrap.memory_lock=true
-      - ES_JAVA_OPTS=-Xms256M -Xmx256M
+      #- ES_JAVA_OPTS=-Xms256M -Xmx256M
       - ELASTIC_PASSWORD=changeme
     #    networks:
     #      - docker-elk

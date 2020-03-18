@@ -1,0 +1,1 @@
+#!/bin/bashcd BA_Projectdocker-compose down

@@ -1,0 +1,1 @@
+docker build -t baproject:latest .docker-compose builddocker-compose up -d
