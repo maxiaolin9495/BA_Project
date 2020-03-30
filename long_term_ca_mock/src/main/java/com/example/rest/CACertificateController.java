@@ -26,6 +26,7 @@ import java.util.Date;
 @Controller
 @RequestMapping(value="/v1")
 public class CACertificateController {
+
     Logger log = LoggerFactory.getLogger(CACertificateController.class);
 
     @Autowired
@@ -40,12 +41,15 @@ public class CACertificateController {
     @RabbitListener(queues = "#{autoDeleteQueue1.name}")
     public void receiveDirectQueue(Message message) {
 
-        log.info("Receive an update notification by root CA");
+        Date d1 = new Date(System.currentTimeMillis());
+
 
         try {
             CertificateUpdateNotification certificateUpdateNotification = objectMapper.readValue(message.getBody(), CertificateUpdateNotification.class);
+            String requestNumber = "" + certificateUpdateNotification.getRequestNumber();
+            log.info(requestNumber + ". receive an update notification by root CA");
             if(certificateUpdateNotification.getRootCAId().equals(certificateManagement.getRootCAId())) {
-                certificateManagement.requestIntermediateCertificate();
+                certificateManagement.requestIntermediateCertificate(requestNumber);
             }
         } catch (IOException e) {
             log.error("Failed to holds new LTC from root CA" + e.getMessage());
@@ -56,26 +60,27 @@ public class CACertificateController {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestLTC")
     public ResponseEntity<CertificateResponse> requestLTC(@RequestHeader(value = "Authorization") String token,
                                                             @RequestParam(value = "publicKeyLTC") String key,
-                                                            @RequestParam(value = "vin") String id) throws Exception {
-        log.info("Receive LTC request with vin " + id);
+                                                            @RequestParam(value = "vin") String id,
+                                                            @RequestParam(value = "requestNumber") String requestNumber) throws Exception {
+        log.info(requestNumber + ". receive LTC request with vin " + id);
 
         Date d1 = new Date(System.currentTimeMillis());
         if(token == null){
-            log.info("Request without token, invalid request");
+            log.info(requestNumber + ". request without token, invalid request");
             return ResponseEntity.status(401).build();
         }
         if(!tokenValidationService.validateToken(token)){
-            log.info("Invalid Token, reject the request");
+            log.info(requestNumber + ". invalid Token, reject the request");
             return ResponseEntity.status(401).build();
         }
-        X509Certificate certificate = certificateManagement.createLTC(key, id);
+        X509Certificate certificate = certificateManagement.createLTC(key, id, requestNumber);
         CertificateResponse certificateResponse= new CertificateResponse();
         certificateResponse.setCaId(certificateManagement.getCaId());
         certificateResponse.setCertificate(new String(Base64.getEncoder().encode(certificate.getEncoded())));
 
         Date d2 = new Date(System.currentTimeMillis());
 
-        log.info("Time used to generate a new LTC is" + (d2.getTime() - d1.getTime()) + " ms" );
+        log.info(requestNumber + ". time used to generate a new LTC is " + (d2.getTime() - d1.getTime()) + " ms" );
         return ResponseEntity.ok(certificateResponse);
     }
 

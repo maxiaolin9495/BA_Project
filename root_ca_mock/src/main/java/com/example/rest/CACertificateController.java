@@ -34,6 +34,8 @@ import java.util.Date;
 public class CACertificateController {
     Logger log = LoggerFactory.getLogger(CACertificateController.class);
 
+    private int manipulationNumber = 1;
+
     @Value("${elasticsearch.index}")
     String index;
 
@@ -68,9 +70,10 @@ public class CACertificateController {
 
         try {
             CertificateUpdateNotification certificateUpdateNotification = objectMapper.readValue(message.getBody(), CertificateUpdateNotification.class);
-            log.info("Receive a certificate update notification from root CA " + certificateUpdateNotification.getRootCAId());
-            if (certificateManagement.isCAIdValid(certificateUpdateNotification.getRootCAId())){
-                certificateManagement.updateRootCertificate(certificateUpdateNotification.getRootCAId());
+            String requestNumber = "" + certificateUpdateNotification.getRequestNumber();
+            log.info(requestNumber + ". receive a certificate update notification from root CA " + certificateUpdateNotification.getRootCAId());
+            if (certificateManagement.isCAIdValid(certificateUpdateNotification.getRootCAId())) {
+                certificateManagement.updateRootCertificate(certificateUpdateNotification.getRootCAId(), requestNumber);
             }
             sender.send(certificateUpdateNotification, vehicleRoutingKey);
         } catch (IOException e) {
@@ -90,37 +93,37 @@ public class CACertificateController {
         log.info(id + " applies long-term CA certificate");
 
         CA ca = elasticSearchRepository.findCA(index, id);
-        if(ca == null || ca.getRevoked()) return ResponseEntity.status(401).build();
+        if (ca == null || ca.getRevoked()) return ResponseEntity.status(401).build();
 
         X509Certificate certificate = certificateManagement.createIntermediateCertificate(key, id);
-        CertificateResponse certificateResponse= new CertificateResponse();
+        CertificateResponse certificateResponse = new CertificateResponse();
         certificateResponse.setCaId(certificateManagement.getCaId());
         certificateResponse.setCertificate(new String(Base64.getEncoder().encode(certificate.getEncoded())));
         return ResponseEntity.ok(certificateResponse);
     }
 
 
-
     @RequestMapping(method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestCertificate")
     public ResponseEntity requestCertificate(@RequestHeader(value = "Authorization") String token,
-                                             @RequestParam(value = "id") String id) throws Exception {
+                                             @RequestParam(value = "id") String id,
+                                             @RequestParam(value = "requestNumber") String requestNumber) throws Exception {
         Date d1 = new Date(System.currentTimeMillis());
 
-        if(token == null) return ResponseEntity.status(401).build();
+        if (token == null) return ResponseEntity.status(401).build();
         Date d3 = new Date(System.currentTimeMillis());
-        if(!tokenValidationService.validateToken(token)) return ResponseEntity.status(401).build();
+        if (!tokenValidationService.validateToken(token)) return ResponseEntity.status(401).build();
         Date d4 = new Date(System.currentTimeMillis());
-        log.info("time used to validate the token is " + (d4.getTime() - d3.getTime()) + " ms" );
+        log.info(requestNumber + ". time used to validate the token is " + (d4.getTime() - d3.getTime()) + " ms");
         X509Certificate certificate = certificateManagement.getCertificate(id);
-        CertificateResponse certificateResponse= new CertificateResponse();
+        CertificateResponse certificateResponse = new CertificateResponse();
         certificateResponse.setCaId(id);
         certificateResponse.setCertificate(new String(Base64.getEncoder().encode(certificate.getEncoded())));
 
         Date d2 = new Date(System.currentTimeMillis());
 
-        log.info("Time used to return a root certificate is" + (d2.getTime() - d1.getTime()) + " ms" );
+        log.info(requestNumber + ". time used to return a root certificate is " + (d2.getTime() - d1.getTime()) + " ms");
         return ResponseEntity.ok(certificateResponse);
     }
 
@@ -128,11 +131,11 @@ public class CACertificateController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestCertificateForRoot")
     public ResponseEntity requestCertificateForRoot(@RequestParam(value = "rootCAId") String rootCAId,
-                                             @RequestParam(value = "id") String id) throws Exception {
-        if(!Arrays.asList(caIds).contains(rootCAId)) return ResponseEntity.status(400).build();
+                                                    @RequestParam(value = "id") String id) throws Exception {
+        if (!Arrays.asList(caIds).contains(rootCAId)) return ResponseEntity.status(400).build();
 
         X509Certificate certificate = certificateManagement.getCertificate(id);
-        CertificateResponse certificateResponse= new CertificateResponse();
+        CertificateResponse certificateResponse = new CertificateResponse();
         certificateResponse.setCaId(id);
         certificateResponse.setCertificate(new String(Base64.getEncoder().encode(certificate.getEncoded())));
         return ResponseEntity.ok(certificateResponse);
@@ -140,14 +143,18 @@ public class CACertificateController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/manipulation")
     public ResponseEntity updateRootCertificate() throws Exception {
-        log.info("Receive manipulation request, update own root certificate");
 
         certificateManagement.createRootCertificate();
+
+        log.info("" + manipulationNumber +  ". receive manipulation request, update own root certificate");
+
         CertificateUpdateNotification certificateUpdateNotification = new CertificateUpdateNotification();
         certificateUpdateNotification.setRootCAId(certificateManagement.getCaId());
+        certificateUpdateNotification.setRequestNumber(manipulationNumber++);
+
 
         sender.send(certificateUpdateNotification, ltcaRoutingKey);
-
+        Thread.sleep(20);
         sender.send(certificateUpdateNotification, vehicleRoutingKey);
 
         sender.send(certificateUpdateNotification, otherRCARoutingKey);

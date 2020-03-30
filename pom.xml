@@ -141,13 +141,13 @@
     <modules>
         <module>authorization_server_mock</module>
         <module>ca_mock</module>
-        <module>Data</module>
+        <module>data</module>
         <module>dataStore</module>
         <module>long_term_ca_mock</module>
-        <module>RabbitMQ-Configuration</module>
+        <module>rabbitMQ_configuration</module>
         <module>root_ca_mock</module>
         <module>vehicle_mock</module>
-        <module>Write-Test-Data-In</module>
+        <module>write_test_data_in</module>
 
     </modules>
 

@@ -93,13 +93,12 @@ public class CertificateManagementForRootCA extends CertificateManagement {
             throw new RuntimeException("Failed to update root certificate");
         }
     }
-    public void updateRootCertificate(String caId){
+    public void updateRootCertificate(String caId, String requestNumber){
         if(certificateStore == null) {
             start();
             createRootCertificate();
         }
         try {
-            logger.info("Request root certificate from root CA " +caId);
             MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -112,7 +111,7 @@ public class CertificateManagementForRootCA extends CertificateManagement {
                     Base64.getDecoder().decode(
                             response.getBody().getCertificate()
                     )));
-            logger.info("Received root certificate of " + caId);
+            logger.info(requestNumber + ". received root certificate of " + caId);
             this.certificateStore.put(caId, certificate);
         } catch(HttpClientErrorException | HttpServerErrorException e) {
             logger.info("Backend rejects request");
@@ -129,7 +128,7 @@ public class CertificateManagementForRootCA extends CertificateManagement {
         }
         X509Certificate certificate = this.certificateStore.get(caId);
         if(!caId.equals(this.caId) && certificate == null){
-            updateRootCertificate(caId);
+            updateRootCertificate(caId, "0");
             certificate = this.certificateStore.get(caId);
         }else if(certificate == null){
             createRootCertificate();

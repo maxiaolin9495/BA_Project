@@ -13,6 +13,8 @@ public class CertificateUpdateNotification implements Serializable {
 
     private String rootCAId;
 
+    private int requestNumber;
+
     public CertificateUpdateNotification(){
 
     }
@@ -23,5 +25,13 @@ public class CertificateUpdateNotification implements Serializable {
 
     public void setRootCAId(String rootCAId) {
         this.rootCAId = rootCAId;
+    }
+
+    public int getRequestNumber() {
+        return requestNumber;
+    }
+
+    public void setRequestNumber(int requestNumber) {
+        this.requestNumber = requestNumber;
     }
 }

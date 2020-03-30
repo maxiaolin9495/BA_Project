@@ -28,7 +28,7 @@ public class TokenService {
     RestTemplate restTemplate;
 
 
-    public String requestToken(String password, String vin, String audience) throws Exception{
+    public String requestToken(String password, String vin, String audience, String requestNumber) throws Exception{
         try{
             Date d1 = new Date(System.currentTimeMillis());
             MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
@@ -38,11 +38,13 @@ public class TokenService {
             map.add("password", password);
             map.add("vin", vin);
             map.add("audience", audience);
+            map.add("requestNumber", requestNumber);
+
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
             ResponseEntity<TokenResponse> response = restTemplate.exchange(tokenEndpoint, HttpMethod.POST, request, TokenResponse.class);
             String token = response.getBody().getToken();
             Date d2 = new Date(System.currentTimeMillis());
-            logger.info("Time used to request Token is " + (d2.getTime()-d1.getTime()) + " ms");
+            logger.info(requestNumber + ". time used to request Token is " + (d2.getTime()-d1.getTime()) + " ms");
             return token;
         } catch(HttpClientErrorException | HttpServerErrorException e) {
             logger.error("Backend rejects request");

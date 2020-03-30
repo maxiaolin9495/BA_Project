@@ -43,7 +43,6 @@ public class TokenValidationService {
 
     public boolean validateToken(String token) {
         try {
-            log.info("Validation starts");
             SignedJWT signedJWT = SignedJWT.parse(token);
             return validateSignature(signedJWT) &&
                     validateIssuer(signedJWT.getJWTClaimsSet().getIssuer()) &&

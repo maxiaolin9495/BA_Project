@@ -109,7 +109,7 @@
         <!--notification-->
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>RabbitMQ-Configuration</artifactId>
+            <artifactId>rabbitMQ_configuration</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

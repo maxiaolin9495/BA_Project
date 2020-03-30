@@ -1,1 +1,1 @@
-#!/bin/bashcd BA_Projectdocker-compose down
+#!/bin/bashcd BA_Projectdocker-compose downdocker rmi -f $(docker images -q)s

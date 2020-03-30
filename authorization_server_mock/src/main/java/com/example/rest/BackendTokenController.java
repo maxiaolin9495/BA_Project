@@ -34,9 +34,8 @@ public class BackendTokenController {
     ElasticSearchRepository elasticSearchRepository;
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, path = "/requestToken")
-    public ResponseEntity requestToken(@RequestParam(value = "password") String password, @RequestParam(value = "vin") String vin, @RequestParam(value = "audience") String aud) throws Exception {
+    public ResponseEntity requestToken(@RequestParam(value = "password") String password, @RequestParam(value = "vin") String vin, @RequestParam(value = "audience") String aud, @RequestParam(value = "requestNumber") String requestNumber) throws Exception {
         Date d1 = new Date(System.currentTimeMillis());
-        log.info("Received get Token request with vinId " + vin + ", password " + password + ", and target audience " + aud);
         if (aud == null || aud.length() == 0){
             log.info("invalid audience value");
             return ResponseEntity.status(400).body("invalid audience value");
@@ -64,7 +63,7 @@ public class BackendTokenController {
 
         Date d2 = new Date(System.currentTimeMillis());
 
-        log.info("Time used to generate a new Token is" + (d2.getTime() - d1.getTime()) + " ms" );
+        log.info(requestNumber + ". time used to generate a new Token is " + (d2.getTime() - d1.getTime()) + " ms" );
         return ResponseEntity.ok(tokenResponse);
 
     }

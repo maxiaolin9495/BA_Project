@@ -196,7 +196,7 @@ services:
     ports:
       - 8101:8101
   write-in:
-    build: ./Write-Test-Data-In
+    build: ./write_test_data_in
     environment:
       - ELASTIC_SEARCH_IP=elasticsearch:9200
       - ELASTICSEARCH_USERNAME=elastic

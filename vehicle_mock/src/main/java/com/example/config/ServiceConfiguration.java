@@ -22,10 +22,10 @@ import java.util.List;
 public class ServiceConfiguration {
 
 
-    @Value("${http.connect.timeout:3000}")
+    @Value("${http.connect.timeout:1100}")
     private int connectTimeout;
 
-    @Value("${http.read.timeout:3000}")
+    @Value("${http.read.timeout:1100}")
     private int readTimeout;
 
     @Bean

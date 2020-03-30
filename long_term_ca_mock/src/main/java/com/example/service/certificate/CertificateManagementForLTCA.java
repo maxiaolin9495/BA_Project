@@ -41,10 +41,9 @@ public class CertificateManagementForLTCA extends CertificateManagement {
 
 
 
-    public void requestIntermediateCertificate(){
+    public void requestIntermediateCertificate(String requestNumber){
         try {
             CertAndKeyGen keyGen = new CertAndKeyGen("RSA", "SHA1WithRSA", null);
-            logger.info("generate a key pair");
             keyGen.generate(1024);
             PUBLIC_KEY = keyGen.getPublicKey();
             PRIVATE_KEY = keyGen.getPrivateKey();
@@ -53,12 +52,12 @@ public class CertificateManagementForLTCA extends CertificateManagement {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            logger.info("build Request");
             map.add("publicKeyLTCAC", new String(Base64.getEncoder().encode(PUBLIC_KEY.getEncoded())));
             map.add("LTCA_id", caId);
+            map.add("requestNumber", requestNumber);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-            logger.info("Update LTCA certificate");
+            logger.info(requestNumber + ". update LTCA certificate");
             ResponseEntity<CertificateResponse> response = restTemplate.exchange(rootCAEndpoint, HttpMethod.POST, request, CertificateResponse.class);
 
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -68,7 +67,6 @@ public class CertificateManagementForLTCA extends CertificateManagement {
                             response.getBody().getCertificate()
                     )));
 
-            logger.info("Successfully");
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -78,11 +76,10 @@ public class CertificateManagementForLTCA extends CertificateManagement {
 
     }
 
-    public X509Certificate createLTC(String publicKey, String vin){
-        if(longTermCACertificate == null) requestIntermediateCertificate();
+    public X509Certificate createLTC(String publicKey, String vin, String requestNumber){
+        if(longTermCACertificate == null) requestIntermediateCertificate(requestNumber);
         try {
             X509Certificate intermediateCertificate = signCertificate(publicKey, vin, longTermCACertificate, PRIVATE_KEY);
-            logger.info("LT certificate is issued");
             return intermediateCertificate;
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,7 +90,7 @@ public class CertificateManagementForLTCA extends CertificateManagement {
     }
 
     public X509Certificate getCertificate() {
-        if(longTermCACertificate == null) requestIntermediateCertificate();
+        if(longTermCACertificate == null) requestIntermediateCertificate("0");
         return longTermCACertificate;
     }
 

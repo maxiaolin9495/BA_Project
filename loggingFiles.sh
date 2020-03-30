@@ -7,3 +7,12 @@ for i in ${array[@]}; do
     docker cp "$(docker ps -aqf "name=$i"):/var/logs/." "var/logs"
 	echo succeed
 done
+
+files=("azsA" "azsB" "ltcaA" "ltcaB" "rcaA" "rcaB" "vehicleA1" "vehicleB1")
+
+for i in ${files[@]}; do
+    sed -i 's/^[^:]*://g' ./var/logs/$i.log
+    sed -i 's/^[^:]*://g' ./var/logs/$i.log
+    sed -i 's/^[^:]*://g' ./var/logs/$i.log
+    sed -i 's/ //' ./var/logs/$i.log
+done
