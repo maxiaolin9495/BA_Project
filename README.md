@@ -28,20 +28,16 @@ docker-compose build
 
 ```
 
-Start the database in path \database (ElasticSearch & RabbitMQ)
+To run Tests
 
 ```
-cd database
-docker-compose up
+./continuingTestForDelay.sh
 
 ```
-Finally
-```
-docker-compose up
+or 
 
 ```
-
-
-
+./continuingTestForPacketLoss.sh
+```
 
  
